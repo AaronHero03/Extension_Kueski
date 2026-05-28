@@ -210,7 +210,7 @@ async function loadLoans() {
 				<div class="loan-header">Préstamo #${loan.id_prestamo}</div>
 				<div class="loan-row"><span>Monto</span><strong>$${Number(loan.cantidad).toFixed(2)} MXN</strong></div>
 				<div class="loan-row"><span>Cuotas</span><strong>${loan.cuotas}</strong></div>
-				<div class="loan-row"><span>Tasa anual</span><strong>${loan.tasa}%</strong></div>
+				<div class="loan-row"><span>Tasa anual</span><strong>${(loan.tasa * 100).toFixed(2)}%</strong></div>
 				<div class="loan-row"><span>Vence</span><strong>${new Date(loan.fecha_fin).toLocaleDateString("es-MX")}</strong></div>
 			`;
 			list.appendChild(card);
