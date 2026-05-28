@@ -1,0 +1,32 @@
+{
+	"manifest_version": 3,
+	"name": "KueskiPay",
+	"version": "1.0.0",
+	"description": "Gestiona tu saldo, cashback y compras en tiendas partner",
+	"permissions": ["storage", "activeTab", "tabs"],
+	"host_permissions": ["http://localhost:3000/*"],
+	"action": {
+		"default_popup": "src/popup/popup.html",
+		"default_title": "KueskiPay"
+	},
+
+	"background": {
+		"service_worker": "src/background.js",
+		"type": "module"
+	},
+
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["src/content/content-script.js"],
+			"run_at": "document_end"
+		}
+	],
+
+	"web_accessible_resources": [
+		{
+			"resources": ["src/content/kueski.png"],
+			"matches": ["<all_urls>"]
+		}
+	]
+}

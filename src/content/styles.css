@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap");
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "Instrument Sans", sans-serif;
+	background-color: transparent;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* CONTENEDOR PRINCIPAL DE LA TARJETA (MODAL) */
+.kueski-popup {
+	background: #ffffff;
+	aspect-ratio: 3/4;
+	width: 340px;
+	padding: 24px;
+	border-radius: 16px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+	display: flex;
+	flex-direction: column;
+}
+
+/* HEADER: Logo y botón de cerrar */
+.popup-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 42px;
+}
+
+.logo {
+	height: 28px; /* Ajusta esto según las proporciones reales de tu logo */
+	width: auto;
+}
+
+.close-btn {
+	background: none;
+	border: none;
+	font-size: 30px;
+	color: #a3a3a3;
+	cursor: pointer;
+	line-height: 0.8;
+	padding: 0;
+}
+
+.close-btn:hover {
+	color: #666666;
+}
+
+/* CONTENIDO DE TEXTO */
+.popup-content h1 {
+	font-size: 26px;
+	font-weight: 700;
+	color: #000000;
+	line-height: 1.2;
+	margin-bottom: 16px;
+}
+
+.popup-content h2 {
+	font-size: 18px;
+	font-weight: 700;
+	color: #000000;
+	margin-bottom: 24px;
+}
+
+.popup-content p {
+	font-size: 16px;
+	font-weight: 400;
+	color: #111111;
+	line-height: 1.4;
+	margin-bottom: 16px;
+}
+
+/* Espaciado extra para el último párrafo antes del botón */
+.popup-content p:last-of-type {
+	margin-bottom: 24px;
+}
+
+/* BOTÓN PRINCIPAL AZUL */
+.primary-btn {
+	background-color: #2b95fa; /* Color azul estilo KueskiPay */
+	color: #ffffff;
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 600;
+	border: none;
+	border-radius: 8px;
+	padding: 16px;
+	width: 100%;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.primary-btn:hover {
+	background-color: #1c81df;
+}

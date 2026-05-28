@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Tarjeta KueskiPay</title>
+		<link rel="stylesheet" href="popup.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	</head>
+	<body>
+		<!-- ════════════════════════════ VIEW: LOADING ════════════════════════════ -->
+		<div class="kueski-popup view hidden" id="view-loading">
+			<div class="popup-header">
+				<span></span>
+				<button class="close-btn" aria-label="Cerrar">&times;</button>
+			</div>
+			<div class="loading-body">
+				<img src="kueski.png" alt="Kueski" />
+				<div class="spinner"></div>
+				<p>Verificando sesión...</p>
+			</div>
+		</div>
+
+		<!-- ════════════════════════════ VIEW: LOGIN ════════════════════════════ -->
+		<div class="kueski-popup view" id="view-login">
+			<div class="popup-header">
+				<span></span>
+				<button class="close-btn" aria-label="Cerrar">&times;</button>
+			</div>
+
+			<div class="popup-head">
+				<img src="kueski.png" alt="Kueski" />
+				<h1>Inicia sesión</h1>
+			</div>
+
+			<form id="form-login">
+				<div class="forms">
+					<input
+						type="email"
+						id="email"
+						placeholder="Correo electrónico"
+						class="field"
+						required
+					/>
+					<input
+						type="password"
+						id="password"
+						placeholder="Contraseña"
+						class="field"
+						required
+					/>
+				</div>
+
+				<div id="login-error" class="hidden"></div>
+
+				<div class="secondary-btn">
+					<a href="#" class="secondary-text emphatize"
+						>¿Olvidaste tu contraseña?</a
+					>
+				</div>
+
+				<button type="submit" class="primary-btn rounded" id="btn-login">
+					Iniciar sesión
+				</button>
+			</form>
+
+			<div id="not-account" class="secondary-text">
+				¿Aún no tienes cuenta?
+				<a href="#" class="emphatize secondary-text">Crear una cuenta</a>
+			</div>
+		</div>
+
+		<!-- ════════════════════════════ VIEW: MAIN ════════════════════════════ -->
+		<div class="kueski-popup view hidden" id="view-main">
+			<div class="popup-header">
+				<img src="kueski.png" alt="Kueski" class="header-logo" />
+				<button class="close-btn" aria-label="Cerrar" id="btn-close">
+					&times;
+				</button>
+			</div>
+
+			<div class="user-greeting">
+				<span>Hola, <strong id="user-name">Usuario</strong></span>
+				<button id="btn-logout" class="logout-btn">Cerrar sesión</button>
+			</div>
+
+			<div class="balance-card card">
+				<div class="icon-circle">$</div>
+				<div class="balance-label">Saldo disponible</div>
+				<div class="balance-amount" id="balance-amount">
+					— <span class="currency">MXN</span>
+				</div>
+			</div>
+
+			<div class="cashback-card card">
+				<div class="card-title">Cashback Acumulado</div>
+				<div class="card-amount" id="cashback-amount">
+					— <span class="currency">MXN</span>
+				</div>
+			</div>
+
+			<!-- Mostrado solo si la pestaña activa es una tienda partner -->
+			<div id="partner-section" class="hidden">
+				<div class="reward-card card">
+					<div class="card-title">Recompensa en esta tienda</div>
+					<div class="card-amount" id="reward-amount">
+						Gana con tu <strong id="cashback-pct">5%</strong> de cashback en
+						esta tienda
+					</div>
+				</div>
+				<button class="primary-btn rounded" id="btn-pay">
+					Pagar con KueskiPay
+				</button>
+			</div>
+
+			<!-- Mostrado cuando el sitio actual no es partner -->
+			<div id="non-partner-section">
+				<p class="non-partner-msg">
+					<strong>&#128722;</strong>
+					Visita una tienda asociada para pagar con KueskiPay y ganar cashback.
+				</p>
+			</div>
+		</div>
+
+		<!-- ════════════════════════════ VIEW: SIMULATE ════════════════════════════ -->
+		<div class="kueski-popup view hidden" id="view-simulate">
+			<div class="popup-header">
+				<button class="back-btn" id="btn-back-simulate">
+					&#8592; Regresar
+				</button>
+				<button class="close-btn" aria-label="Cerrar">&times;</button>
+			</div>
+
+			<div class="popup-head">
+				<img src="kueski.png" alt="Kueski" />
+				<h1>¿Cuánto vas a pagar?</h1>
+			</div>
+
+			<div class="partner-badge">
+				<span id="simulate-store-name">Tienda asociada</span>
+			</div>
+
+			<div class="forms">
+				<div class="amount-input-wrapper">
+					<span class="currency-symbol">$</span>
+					<input
+						type="number"
+						id="simulate-amount"
+						placeholder="0.00"
+						class="field amount-field"
+						min="1"
+						step="0.01"
+					/>
+				</div>
+			</div>
+			<p class="amount-hint">Ingresa el monto exacto de tu compra en MXN</p>
+
+			<div id="simulate-error" class="view-error hidden"></div>
+
+			<button class="primary-btn rounded" id="btn-simulate">
+				Ver planes de pago
+			</button>
+		</div>
+
+		<!-- ════════════════════════════ VIEW: PLANS ════════════════════════════ -->
+		<div class="kueski-popup view hidden" id="view-plans">
+			<div class="popup-header">
+				<button class="back-btn" id="btn-back-plans">&#8592; Regresar</button>
+				<button class="close-btn" aria-label="Cerrar">&times;</button>
+			</div>
+
+			<p class="section-title">Elige tu plan de pago</p>
+			<p class="plan-amount-summary">
+				Monto: <strong id="plans-total-amount">$0.00 MXN</strong>
+			</p>
+
+			<!-- Tarjetas generadas dinámicamente por popup.js -->
+			<div id="plans-list" class="plans-list"></div>
+
+			<div id="plans-error" class="view-error hidden"></div>
+
+			<button class="primary-btn rounded" id="btn-select-plan" disabled>
+				Continuar
+			</button>
+		</div>
+
+		<!-- ════════════════════════════ VIEW: CONFIRM ════════════════════════════ -->
+		<div class="kueski-popup view hidden" id="view-confirm">
+			<div class="popup-header">
+				<button class="back-btn" id="btn-back-confirm">&#8592; Regresar</button>
+				<button class="close-btn" aria-label="Cerrar">&times;</button>
+			</div>
+
+			<div class="popup-head">
+				<img src="kueski.png" alt="Kueski" />
+			</div>
+
+			<p class="confirm-title">Confirma tu pago</p>
+
+			<div class="confirm-summary card">
+				<div class="summary-row">
+					<span class="summary-label">Tienda</span>
+					<span class="summary-value" id="confirm-store">—</span>
+				</div>
+				<div class="summary-row">
+					<span class="summary-label">Monto de compra</span>
+					<span class="summary-value" id="confirm-amount">—</span>
+				</div>
+				<div class="summary-row">
+					<span class="summary-label">Número de cuotas</span>
+					<span class="summary-value" id="confirm-installments">—</span>
+				</div>
+				<div class="summary-row">
+					<span class="summary-label">Monto por cuota</span>
+					<span class="summary-value" id="confirm-installment-amount">—</span>
+				</div>
+				<div class="summary-row">
+					<span class="summary-label">Total a pagar</span>
+					<span class="summary-value" id="confirm-total">—</span>
+				</div>
+				<hr class="cashback-divider" />
+				<div class="summary-row">
+					<span class="summary-label">Cashback a ganar</span>
+					<span class="summary-value green-text" id="confirm-cashback"
+						>+$0.00 MXN</span
+					>
+				</div>
+			</div>
+
+			<div id="confirm-error" class="view-error hidden"></div>
+
+			<button class="primary-btn rounded" id="btn-confirm">
+				Confirmar pago
+			</button>
+			<button class="secondary-outline-btn rounded" id="btn-cancel-confirm">
+				Cancelar
+			</button>
+		</div>
+
+		<!-- ════════════════════════════ VIEW: SUCCESS ════════════════════════════ -->
+		<div class="kueski-popup view hidden" id="view-success">
+			<div class="popup-header">
+				<span></span>
+				<button class="close-btn" aria-label="Cerrar">&times;</button>
+			</div>
+
+			<div class="success-body">
+				<div class="success-icon">&#10003;</div>
+				<p class="success-title">¡Pago registrado!</p>
+				<p class="success-subtitle">
+					Tu compra ha sido procesada<br />exitosamente con KueskiPay.
+				</p>
+
+				<div class="cashback-earned card">
+					<div class="card-title">Cashback ganado</div>
+					<div class="card-amount" id="success-cashback">
+						+$0.00 <span class="currency">MXN</span>
+					</div>
+				</div>
+
+				<button
+					class="primary-btn rounded"
+					id="btn-close-success"
+					style="width: 100%"
+				>
+					Cerrar
+				</button>
+			</div>
+		</div>
+
+		<script type="module" src="popup.js"></script>
+	</body>
+</html>
