@@ -5,11 +5,8 @@ import {
 	getLoans,
 	checkBenefits,
 	simulateTransaction,
-	trackIntent,
-	confirmTransaction,
 } from "../api.js";
 
-// It's just an allias for avoid write getElementById many different times
 const $ = (id) => document.getElementById(id);
 
 const storage = {
@@ -27,18 +24,18 @@ const state = {
 	user: null,
 	dashboard: null,
 	currentTabUrl: null,
-	currentPartner: null, // { domain, is_partner, id_partner?, cashback_percentage }
-	selectedPlan: null, // { monto, plan: { cuotas, monto_cuota, total }, cashback_to_earn }
-	pendingTx: null, // { id, cashback_a_ganar, ...selectedPlan }
+	currentPartner: null,     // { domain, is_partner, id_partner?, cashback_percentage }
+	simulationPreview: null,  // { monto, cashback_to_earn, payment_plans, is_approved }
 };
 
-// Funcion de ayuda para mostrar la pantalla correcta y ocultar el resto
-async function loadView(id) {
+// ─── Utilidades ───────────────────────────────────────────────────────────────
+
+function loadView(id) {
 	document.querySelectorAll(".view").forEach((v) => v.classList.add("hidden"));
 	$(id).classList.remove("hidden");
 }
 
-// ─── Init ─────────────────────────────────────────────────────────
+// ─── Init ─────────────────────────────────────────────────────────────────────
 
 async function init() {
 	loadView("view-loading");
@@ -48,7 +45,7 @@ async function init() {
 
 	const token = await storage.get("token");
 	if (!token) {
-		loadLogin();
+		loadView("view-login");
 		return;
 	}
 
@@ -56,55 +53,64 @@ async function init() {
 		await verifyToken();
 		state.user = await storage.get("user");
 		await loadMain();
-	} catch (err) {
-		loadLogin();
+	} catch {
+		loadView("view-login");
 	}
 }
 
-// ─── Show different sections and load data from DB ────────────────────────────────────
-
-async function loadLogin() {
-	loadView("view-login");
-}
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function loadMain() {
 	loadView("view-main");
 
+	// Limpiar previews
+	$("balance-preview").classList.add("hidden");
+	$("cashback-preview").classList.add("hidden");
+
 	try {
 		const res = await getDashboard();
-		// const res = {
-		// 	data: {
-		// 		balance: { available: 10 },
-		// 		cashback: { available: 10 },
-		// 	},
-		// };
 		state.dashboard = res.data;
 
-		$("balance-amount").textContent = res.data.balance.available;
-		$("cashback-amount").textContent = res.data.cashback.available;
-		$("user-name").textContent = state.user?.nombre;
+		$("balance-amount").innerHTML =
+			`${res.data.balance.available} <span class="currency">MXN</span>`;
+		$("cashback-amount").innerHTML =
+			`${res.data.cashback.available} <span class="currency">MXN</span>`;
+		$("user-name").textContent = state.user?.nombre ?? state.user;
 
-		await checkCurrentParner();
-		console.log(state);
+		if (state.simulationPreview) {
+			const { monto, cashback_to_earn } = state.simulationPreview;
+			const balance = parseFloat(res.data.balance.available);
+			const cashback = parseFloat(res.data.cashback.available);
+
+			$("balance-preview").textContent = `(- $${monto.toFixed(2)} MXN)`;
+			$("balance-preview").classList.remove("hidden");
+			$("balance-result").textContent = `= $${(balance - monto).toFixed(2)} MXN`;
+			$("balance-result").classList.remove("hidden");
+
+			$("cashback-preview").textContent = `(+ $${cashback_to_earn} MXN)`;
+			$("cashback-preview").classList.remove("hidden");
+			$("cashback-result").textContent = `= $${(cashback + parseFloat(cashback_to_earn)).toFixed(2)} MXN`;
+			$("cashback-result").classList.remove("hidden");
+		} else {
+			$("balance-preview").classList.add("hidden");
+			$("balance-result").classList.add("hidden");
+			$("cashback-preview").classList.add("hidden");
+			$("cashback-result").classList.add("hidden");
+		}
+
+		await checkCurrentPartner();
 		if (state.currentPartner?.is_partner) showPartnerSection();
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 	}
 }
 
-async function checkCurrentParner() {
+async function checkCurrentPartner() {
 	if (!state.currentTabUrl?.startsWith("http")) return;
 	const { hostname } = new URL(state.currentTabUrl);
 	const domain = hostname.replace(/^www\./, "");
 	try {
 		const res = await checkBenefits(domain);
-		// const res = {
-		// 	data: {
-		// 		is_partner: true,
-		// 		id_partner: 1,
-		// 		cashback_percentage: 3,
-		// 	},
-		// };
 		state.currentPartner = { domain, ...res.data };
 	} catch {
 		// Offline o no partner
@@ -116,19 +122,115 @@ function showPartnerSection() {
 	$("cashback-pct").textContent = `${p.cashback_percentage}%`;
 	$("partner-section").classList.remove("hidden");
 	$("non-partner-section").classList.add("hidden");
+	$("simulate-store-name").textContent = p.domain;
+
+	if (state.simulationPreview) {
+		const { cashback_to_earn, is_approved } = state.simulationPreview;
+
+		$("simulation-result").textContent =
+			`Ganarás $${cashback_to_earn} MXN en esta compra`;
+		$("simulation-result").classList.remove("hidden");
+		$("btn-pay").textContent = "Cambiar monto";
+
+		if (is_approved) {
+			$("balance-warning").classList.add("hidden");
+			$("btn-see-details").classList.remove("hidden");
+		} else {
+			$("balance-warning").classList.remove("hidden");
+			$("btn-see-details").classList.add("hidden");
+		}
+	} else {
+		$("simulation-result").classList.add("hidden");
+		$("balance-warning").classList.add("hidden");
+		$("btn-see-details").classList.add("hidden");
+		$("btn-pay").textContent = "Simular compra";
+	}
 }
 
-async function loadSimulate() {
+// ─── Simulate ─────────────────────────────────────────────────────────────────
+
+function loadSimulate() {
 	loadView("view-simulate");
+	$("simulate-amount").value = "";
+	$("simulate-error").classList.add("hidden");
+	$("btn-simulate").disabled = false;
+	$("btn-simulate").textContent = "Ver planes de pago";
 }
 
-async function loadPlans() {
+// ─── Plans ────────────────────────────────────────────────────────────────────
+
+function loadPlans() {
 	loadView("view-plans");
+	$("plans-error").classList.add("hidden");
+
+	const { monto, cashback_to_earn, payment_plans } = state.simulationPreview;
+	$("plans-total-amount").textContent = `$${monto.toFixed(2)} MXN`;
+
+	const list = $("plans-list");
+	list.innerHTML = "";
+	payment_plans.forEach((plan) => {
+		const card = document.createElement("div");
+		card.className = "plan-card";
+		card.innerHTML = `
+			<div class="plan-info">
+				<span class="plan-title">${plan.cuotas} pagos mensuales</span>
+				<span class="plan-subtitle">$${plan.monto_cuota} MXN / mes · Total $${plan.total} MXN</span>
+				<span class="plan-cashback">Cashback a ganar: $${cashback_to_earn} MXN</span>
+			</div>
+		`;
+		list.appendChild(card);
+	});
 }
 
-// ─── Login & Logout ────────────────────────────────────────────────────────────────────
+// ─── Loans ────────────────────────────────────────────────────────────────────
 
-// Add login functionallity to button
+async function loadLoans() {
+	loadView("view-loans");
+	$("loans-loading").classList.remove("hidden");
+	$("loans-content").classList.add("hidden");
+	$("loans-empty").classList.add("hidden");
+	$("loans-error").classList.add("hidden");
+
+	try {
+		const res = await getLoans();
+		const { summary, active_loans } = res.data;
+
+		$("loans-summary").innerHTML = `
+			<div class="loan-row"><span>Préstamos activos</span><strong>${summary.total_active}</strong></div>
+			<div class="loan-row"><span>Total pendiente</span><strong>$${Number(summary.total_pending).toFixed(2)} MXN</strong></div>
+			<div class="loan-row"><span>Próximo vencimiento</span><strong>${new Date(summary.next_due_date).toLocaleDateString("es-MX")}</strong></div>
+		`;
+
+		const list = $("loans-list");
+		list.innerHTML = "";
+		active_loans.forEach((loan) => {
+			const card = document.createElement("div");
+			card.className = "loan-card";
+			card.innerHTML = `
+				<div class="loan-header">Préstamo #${loan.id_prestamo}</div>
+				<div class="loan-row"><span>Monto</span><strong>$${Number(loan.cantidad).toFixed(2)} MXN</strong></div>
+				<div class="loan-row"><span>Cuotas</span><strong>${loan.cuotas}</strong></div>
+				<div class="loan-row"><span>Tasa anual</span><strong>${loan.tasa}%</strong></div>
+				<div class="loan-row"><span>Vence</span><strong>${new Date(loan.fecha_fin).toLocaleDateString("es-MX")}</strong></div>
+			`;
+			list.appendChild(card);
+		});
+
+		$("loans-loading").classList.add("hidden");
+		$("loans-content").classList.remove("hidden");
+	} catch (err) {
+		$("loans-loading").classList.add("hidden");
+		if (err.status === 404) {
+			$("loans-empty").classList.remove("hidden");
+		} else {
+			$("loans-error").textContent = err.message;
+			$("loans-error").classList.remove("hidden");
+		}
+	}
+}
+
+// ─── Listeners: Login ─────────────────────────────────────────────────────────
+
 $("form-login").addEventListener("submit", async (e) => {
 	e.preventDefault();
 	const btn = $("btn-login");
@@ -139,19 +241,9 @@ $("form-login").addEventListener("submit", async (e) => {
 
 	try {
 		const res = await login($("email").value, $("password").value);
-		// const res = {
-		// 	data: {
-		// 		token: "1213213123",
-		// 		user: "Aaron",
-		// 	},
-		// };
-
-		console.log(res);
-
 		await storage.set({ token: res.data.token, user: res.data.user });
 		state.user = res.data.user;
-		console.log("Incio exitoso...");
-		loadMain();
+		await loadMain();
 	} catch (err) {
 		errEl.textContent = err.message;
 		errEl.classList.remove("hidden");
@@ -160,31 +252,67 @@ $("form-login").addEventListener("submit", async (e) => {
 	}
 });
 
-// Add logout functionallity to button
 $("btn-logout").addEventListener("click", async () => {
-	// Remove credentials from the browser storage
 	await storage.remove(["token", "user"]);
 	state.user = null;
 	state.currentPartner = null;
 	state.dashboard = null;
-	$("partner-section").classList.add("hidden");
-	$("non-partner-section").classList.remove("hidden");
-
-	// Reactivate login button
+	state.simulationPreview = null;
 	const btn = $("btn-login");
 	btn.disabled = false;
 	btn.textContent = "Iniciar sesión";
-
-	loadLogin();
+	loadView("view-login");
 });
 
-document.querySelectorAll(".close-btn").forEach((button) => {
-	button.addEventListener("click", () => {
-		window.close();
-	});
+// ─── Listeners: Main ──────────────────────────────────────────────────────────
+
+$("btn-pay").addEventListener("click", loadSimulate);
+$("btn-see-details").addEventListener("click", loadPlans);
+$("btn-loans").addEventListener("click", loadLoans);
+
+// ─── Listeners: Simulate ──────────────────────────────────────────────────────
+
+$("btn-back-simulate").addEventListener("click", loadMain);
+
+$("btn-simulate").addEventListener("click", async () => {
+	const monto = parseFloat($("simulate-amount").value);
+	const errEl = $("simulate-error");
+	const btn = $("btn-simulate");
+	errEl.classList.add("hidden");
+
+	if (!monto || monto <= 0) {
+		errEl.textContent = "Ingresa un monto válido mayor a $0.";
+		errEl.classList.remove("hidden");
+		return;
+	}
+
+	btn.disabled = true;
+	btn.textContent = "Calculando...";
+
+	try {
+		const res = await simulateTransaction(monto, state.currentPartner.id_partner);
+		state.simulationPreview = { monto, ...res.data };
+		await loadMain();
+	} catch (err) {
+		errEl.textContent = err.message;
+		errEl.classList.remove("hidden");
+		btn.disabled = false;
+		btn.textContent = "Ver planes de pago";
+	}
 });
+
+// ─── Listeners: Plans ─────────────────────────────────────────────────────────
+
+$("btn-back-plans").addEventListener("click", loadMain);
+
+// ─── Listeners: Loans ────────────────────────────────────────────────────────
+
+$("btn-back-loans").addEventListener("click", loadMain);
+
+document.querySelectorAll(".close-btn").forEach((btn) => {
+	btn.addEventListener("click", () => window.close());
+});
+
+// ─── Arrancar ────────────────────────────────────────────────────────────────
 
 init();
-//loadMain();
-//loadSimulate();
-//loadPlans();

@@ -1,5 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap");
 
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: auto;
+	min-height: 0;
+	overflow: visible;
+}
+
 @keyframes kueskiSlideIn {
 	from {
 		opacity: 0;
@@ -26,7 +35,7 @@
 .kueski-popup {
 	background: #ffffff;
 	width: 360px;
-	padding: 24px;
+	padding: 16px;
 	border-radius: 16px;
 	border: 1px solid lightgray;
 	display: flex;
@@ -54,7 +63,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 20px;
+	margin-bottom: 12px;
 }
 
 .logo,
@@ -101,9 +110,10 @@
 	font-family: inherit;
 	font-size: 16px;
 	border-radius: 8px;
-	padding: 16px;
+	padding: 13px;
 	width: 100%;
-	margin-bottom: 14px;
+	margin-bottom: 0;
+	margin-top: 4px;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 }
@@ -130,10 +140,10 @@
 	font-size: 15px;
 	font-weight: 600;
 	border-radius: 8px;
-	padding: 12px;
+	padding: 10px;
 	width: 100%;
 	cursor: pointer;
-	margin-bottom: 8px;
+	margin-bottom: 0;
 	transition: all 0.2s ease;
 }
 
@@ -244,7 +254,7 @@
 #partner-section:not(.hidden) {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 8px;
 }
 
 .non-partner-msg {
@@ -266,15 +276,16 @@
 	padding: 18px;
 	border-radius: 14px;
 	transition: all 0.1s linear;
+	margin: 4px 0px;
 }
 
 .balance-card {
 	background: linear-gradient(90deg, #20bdd7 0%, #53eb56 100%);
 	color: white;
-	padding: 22px 18px;
+	padding: 14px 16px;
 	border-radius: 14px;
 	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
-	margin-bottom: 12px;
+	margin-bottom: 8px;
 }
 
 .balance-card:hover {
@@ -291,14 +302,14 @@
 	justify-content: center;
 	font-size: 25px;
 	line-height: 1;
-	margin-bottom: 18px;
+	margin-bottom: 10px;
 	font-weight: bold;
 }
 
 .balance-label {
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 700;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 }
 
 .balance-amount {
@@ -317,7 +328,7 @@
 	background: #f7f7f7;
 	border: 2px solid #d7d7d7;
 	color: #111;
-	margin-bottom: 12px;
+	margin-bottom: 8px;
 }
 
 .cashback-card:hover {
@@ -325,9 +336,9 @@
 }
 
 .card-title {
-	font-size: 16px;
+	font-size: 15px;
 	font-weight: 700;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 }
 
 .card-amount {
@@ -436,7 +447,8 @@
 	font-weight: 700;
 	color: #111;
 	text-align: center;
-	margin-bottom: 4px;
+	margin-top: 0;
+	margin-bottom: 8px;
 }
 
 .plan-amount-summary {
@@ -626,4 +638,101 @@
 .cashback-earned .card-amount {
 	color: #16a34a;
 	font-size: 22px;
+}
+
+/* ── Previews de simulación en las cards ── */
+.amount-preview {
+	font-size: 13px;
+	font-weight: 600;
+	margin: 6px 0 0;
+}
+
+.amount-preview.negative {
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.amount-preview.positive {
+	color: #16a34a;
+}
+
+.amount-result {
+	font-size: 14px;
+	font-weight: 700;
+	margin-top: 2px;
+}
+
+.sim-result-text {
+	font-size: 13px;
+	font-weight: 600;
+	color: #16a34a;
+	margin-top: 8px;
+}
+
+/* ── Advertencia de saldo insuficiente ── */
+.balance-warning {
+	background: #fffbeb;
+	border: 1px solid #fcd34d;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #92400e;
+	text-align: center;
+}
+
+/* ── Botón de préstamos ── */
+.loans-link-btn {
+	background: none;
+	border: none;
+	color: #2b95fa;
+	font-size: 14px;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	padding: 10px 0 2px;
+	text-align: center;
+	width: 100%;
+}
+
+.loans-link-btn:hover {
+	color: #1c81df;
+}
+
+/* ── View: Loans ── */
+.loans-summary {
+	background: #f0f9ff;
+	border: 1px solid #bae6fd;
+	margin-bottom: 12px;
+}
+
+.loans-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.loan-card {
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 14px 16px;
+}
+
+.loan-header {
+	font-size: 14px;
+	font-weight: 700;
+	color: #111;
+	margin-bottom: 8px;
+}
+
+.loan-row {
+	display: flex;
+	justify-content: space-between;
+	font-size: 13px;
+	padding: 3px 0;
+	color: #6b7280;
+}
+
+.loan-row strong {
+	color: #111;
+	font-weight: 600;
 }

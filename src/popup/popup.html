@@ -92,6 +92,8 @@
 				<div class="balance-amount" id="balance-amount">
 					— <span class="currency">MXN</span>
 				</div>
+				<p id="balance-preview" class="amount-preview negative hidden"></p>
+			<p id="balance-result" class="amount-result hidden"></p>
 			</div>
 
 			<div class="cashback-card card">
@@ -99,6 +101,8 @@
 				<div class="card-amount" id="cashback-amount">
 					— <span class="currency">MXN</span>
 				</div>
+				<p id="cashback-preview" class="amount-preview positive hidden"></p>
+				<p id="cashback-result" class="amount-result hidden"></p>
 			</div>
 
 			<!-- Mostrado solo si la pestaña activa es una tienda partner -->
@@ -109,9 +113,16 @@
 						Gana con tu <strong id="cashback-pct">5%</strong> de cashback en
 						esta tienda
 					</div>
+					<p id="simulation-result" class="sim-result-text hidden"></p>
+				</div>
+				<div id="balance-warning" class="balance-warning hidden">
+					⚠ Saldo insuficiente para esta compra
 				</div>
 				<button class="primary-btn rounded" id="btn-pay">
-					Pagar con KueskiPay
+					Simular compra
+				</button>
+				<button class="secondary-outline-btn rounded hidden" id="btn-see-details">
+					Ver planes de pago
 				</button>
 			</div>
 
@@ -122,6 +133,8 @@
 					Visita una tienda asociada para pagar con KueskiPay y ganar cashback.
 				</p>
 			</div>
+
+			<button id="btn-loans" class="loans-link-btn">Ver mis préstamos</button>
 		</div>
 
 		<!-- ════════════════════════════ VIEW: SIMULATE ════════════════════════════ -->
@@ -171,103 +184,38 @@
 				<button class="close-btn" aria-label="Cerrar">&times;</button>
 			</div>
 
-			<p class="section-title">Elige tu plan de pago</p>
+			<p class="section-title">Planes de pago</p>
 			<p class="plan-amount-summary">
 				Monto: <strong id="plans-total-amount">$0.00 MXN</strong>
 			</p>
 
-			<!-- Tarjetas generadas dinámicamente por popup.js -->
 			<div id="plans-list" class="plans-list"></div>
 
 			<div id="plans-error" class="view-error hidden"></div>
-
-			<button class="primary-btn rounded" id="btn-select-plan" disabled>
-				Continuar
-			</button>
 		</div>
 
-		<!-- ════════════════════════════ VIEW: CONFIRM ════════════════════════════ -->
-		<div class="kueski-popup view hidden" id="view-confirm">
+		<!-- ════════════════════════════ VIEW: LOANS ════════════════════════════ -->
+		<div class="kueski-popup view hidden" id="view-loans">
 			<div class="popup-header">
-				<button class="back-btn" id="btn-back-confirm">&#8592; Regresar</button>
+				<button class="back-btn" id="btn-back-loans">&#8592; Regresar</button>
 				<button class="close-btn" aria-label="Cerrar">&times;</button>
 			</div>
 
-			<div class="popup-head">
-				<img src="kueski.png" alt="Kueski" />
+			<p class="section-title">Mis préstamos</p>
+
+			<div id="loans-loading" class="loading-body">
+				<div class="spinner"></div>
 			</div>
 
-			<p class="confirm-title">Confirma tu pago</p>
-
-			<div class="confirm-summary card">
-				<div class="summary-row">
-					<span class="summary-label">Tienda</span>
-					<span class="summary-value" id="confirm-store">—</span>
-				</div>
-				<div class="summary-row">
-					<span class="summary-label">Monto de compra</span>
-					<span class="summary-value" id="confirm-amount">—</span>
-				</div>
-				<div class="summary-row">
-					<span class="summary-label">Número de cuotas</span>
-					<span class="summary-value" id="confirm-installments">—</span>
-				</div>
-				<div class="summary-row">
-					<span class="summary-label">Monto por cuota</span>
-					<span class="summary-value" id="confirm-installment-amount">—</span>
-				</div>
-				<div class="summary-row">
-					<span class="summary-label">Total a pagar</span>
-					<span class="summary-value" id="confirm-total">—</span>
-				</div>
-				<hr class="cashback-divider" />
-				<div class="summary-row">
-					<span class="summary-label">Cashback a ganar</span>
-					<span class="summary-value green-text" id="confirm-cashback"
-						>+$0.00 MXN</span
-					>
-				</div>
+			<div id="loans-content" class="hidden">
+				<div class="loans-summary card" id="loans-summary"></div>
+				<div id="loans-list" class="loans-list"></div>
 			</div>
 
-			<div id="confirm-error" class="view-error hidden"></div>
-
-			<button class="primary-btn rounded" id="btn-confirm">
-				Confirmar pago
-			</button>
-			<button class="secondary-outline-btn rounded" id="btn-cancel-confirm">
-				Cancelar
-			</button>
-		</div>
-
-		<!-- ════════════════════════════ VIEW: SUCCESS ════════════════════════════ -->
-		<div class="kueski-popup view hidden" id="view-success">
-			<div class="popup-header">
-				<span></span>
-				<button class="close-btn" aria-label="Cerrar">&times;</button>
-			</div>
-
-			<div class="success-body">
-				<div class="success-icon">&#10003;</div>
-				<p class="success-title">¡Pago registrado!</p>
-				<p class="success-subtitle">
-					Tu compra ha sido procesada<br />exitosamente con KueskiPay.
-				</p>
-
-				<div class="cashback-earned card">
-					<div class="card-title">Cashback ganado</div>
-					<div class="card-amount" id="success-cashback">
-						+$0.00 <span class="currency">MXN</span>
-					</div>
-				</div>
-
-				<button
-					class="primary-btn rounded"
-					id="btn-close-success"
-					style="width: 100%"
-				>
-					Cerrar
-				</button>
-			</div>
+			<p id="loans-empty" class="non-partner-msg hidden">
+				No tienes préstamos activos en este momento.
+			</p>
+			<div id="loans-error" class="view-error hidden"></div>
 		</div>
 
 		<script type="module" src="popup.js"></script>

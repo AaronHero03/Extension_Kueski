@@ -29,8 +29,8 @@ async function updateBadge(tabId, url) {
 		const domain = hostname.replace(/^www\./, "");
 		const res = await checkBenefits(domain);
 		if (res.data?.is_partner) {
-			chrome.action.setBadgeText({ text: "%", tabId });
-			chrome.action.setBadgeBackgroundColor({ color: "#16a34a", tabId });
+			chrome.action.setBadgeText({ text: "CB", tabId });
+			chrome.action.setBadgeBackgroundColor({ color: "#f97316", tabId });
 		} else {
 			chrome.action.setBadgeText({ text: "", tabId });
 		}
