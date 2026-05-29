@@ -151,6 +151,10 @@ body {
 	color: #374151;
 }
 
+#not-account {
+	margin-top: 20px;
+}
+
 /* ── Textos secundarios ── */
 .secondary-text {
 	text-decoration: none;
