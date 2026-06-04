@@ -107,6 +107,19 @@ async function handleMessage({ type, payload }) {
 			return { success: true };
 		}
 
+		case "OPEN_SIMULATE": {
+			await new Promise((resolve) =>
+				chrome.storage.local.set({ pendingView: "simulate" }, resolve),
+			);
+			try {
+				await chrome.action.openPopup();
+			} catch {
+				// openPopup() requiere gesto de usuario directo en algunas versiones de Chrome.
+				// El flag pendingView ya fue guardado: cuando el usuario abra el popup manualmente navegará directo a simulate.
+			}
+			return { success: true };
+		}
+
 		default:
 			return { error: "Tipo de mensaje desconocido" };
 	}

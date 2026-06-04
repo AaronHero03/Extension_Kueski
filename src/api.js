@@ -1,4 +1,8 @@
-const BASE_URL = "http://localhost:3000";
+const RENDER_URL = "https://rest-api-kueski.onrender.com";
+const LOCAL_URL = "http://localhost:3000";
+let local = false;
+
+const BASE_URL = local ? LOCAL_URL : RENDER_URL;
 
 function getToken() {
 	return new Promise((resolve) =>

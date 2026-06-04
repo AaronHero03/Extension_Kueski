@@ -1,10 +1,22 @@
+// Obtener el dominio de la pagina sin "www."
 const currentDomain = window.location.hostname.replace("www.", "");
 
-const CART_PATHS = ["/cart", "/carrito", "/bolsa", "/cesta", "/checkout", "/bag"];
+// Posibles nombres de las rutas del carrito
+const CART_PATHS = [
+	"/cart",
+	"/carrito",
+	"/bolsa",
+	"/cesta",
+	"/checkout",
+	"/bag",
+];
+
+// Verificar si el dominio contiene
 const isCartPage = CART_PATHS.some((p) =>
 	window.location.pathname.toLowerCase().includes(p),
 );
 
+// Comunicacion con background.js
 chrome.runtime.sendMessage(
 	{ type: "CHECK_STORE", payload: { domain: currentDomain } },
 	(response) => {
@@ -18,9 +30,86 @@ chrome.runtime.sendMessage(
 	},
 );
 
-// ==========================================
-// NUEVA FUNCIÓN: NOTIFICACIÓN SILENCIOSA
-// ==========================================
+// ─── Price Scraping ───────────────────────────────────────────────────────────
+
+function parsePrice(raw) {
+	if (!raw) return null;
+	const num = parseFloat(raw.replace(/[^0-9.]/g, ""));
+	return isNaN(num) || num <= 0 ? null : num;
+}
+
+function scrapeAmazon() {
+	const selectors = [
+		".sc-price",
+		"#corePrice_desktop .a-price .a-offscreen",
+		"#corePriceDisplay_desktop_feature_div .a-offscreen",
+		'.a-price[data-a-color="price"] .a-offscreen',
+		".a-price .a-offscreen",
+		"#price_inside_buybox",
+		"#priceblock_ourprice",
+	];
+	for (const sel of selectors) {
+		const price = parsePrice(document.querySelector(sel)?.textContent);
+		if (price) return price;
+	}
+	return null;
+}
+
+function scrapeWalmart() {
+	const meta = document.querySelector('[itemprop="price"]');
+	if (meta) {
+		const price = parsePrice(meta.getAttribute("content") || meta.textContent);
+		if (price) return price;
+	}
+	const selectors = [
+		"span.price-characteristic",
+		"[data-automation='product-price']",
+		".price-group .price-characteristic",
+	];
+	for (const sel of selectors) {
+		const price = parsePrice(document.querySelector(sel)?.textContent);
+		if (price) return price;
+	}
+	return null;
+}
+
+const PRICE_SCRAPERS = {
+	"amazon.com.mx": scrapeAmazon,
+	"walmart.com.mx": scrapeWalmart,
+};
+
+function watchPriceChanges(scrapeFunc) {
+	let debounceTimer = null;
+	const observer = new MutationObserver(() => {
+		clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => {
+			const price = scrapeFunc();
+			if (price) {
+				chrome.storage.local.set({ detectedPrice: price });
+			} else {
+				chrome.storage.local.remove("detectedPrice");
+			}
+		}, 500);
+	});
+	observer.observe(document.body, {
+		childList: true,
+		subtree: true,
+		characterData: true,
+	});
+}
+
+const scraper = PRICE_SCRAPERS[currentDomain];
+if (scraper) {
+	const price = scraper();
+	if (price) {
+		chrome.storage.local.set({ detectedPrice: price });
+	} else {
+		chrome.storage.local.remove("detectedPrice");
+	}
+	watchPriceChanges(scraper);
+}
+
+// Notifiacion de porcentaje de cashback
 function showSilentNotification(cashbackPercentage) {
 	if (document.getElementById("kueski-silent-root")) return;
 
@@ -134,6 +223,7 @@ function showSilentNotification(cashbackPercentage) {
 	setTimeout(closeNotification, 3000);
 }
 
+// Notificacion del carrito
 function showCartNotification(cashbackPercentage) {
 	if (document.getElementById("kueski-cart-root")) return;
 
@@ -170,7 +260,10 @@ function showCartNotification(cashbackPercentage) {
         border: 1px solid #e0f0ff;
         animation: slideUp 0.4s ease-out forwards;
         max-width: 300px;
+        cursor: pointer;
+        transition: box-shadow 0.2s, border-color 0.2s;
       }
+      .cart-pill:hover { box-shadow: 0 6px 28px rgba(43,149,250,0.18); border-color: #b3d9ff; }
       .cart-pill.hiding { animation: fadeOutDown 0.4s ease-in forwards; }
       .logo { height: 18px; width: auto; }
       .text { display: flex; flex-direction: column; gap: 2px; flex: 1; }
@@ -198,5 +291,13 @@ function showCartNotification(cashbackPercentage) {
 		setTimeout(() => container.remove(), 400);
 	};
 
-	shadow.getElementById("close-cart").addEventListener("click", close);
+	shadow.getElementById("close-cart").addEventListener("click", (e) => {
+		e.stopPropagation();
+		close();
+	});
+
+	// Conexion con el background
+	card.addEventListener("click", () => {
+		chrome.runtime.sendMessage({ type: "OPEN_SIMULATE" });
+	});
 }

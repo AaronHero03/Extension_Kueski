@@ -100,6 +100,14 @@ async function loadMain() {
 
 		await checkCurrentPartner();
 		if (state.currentPartner?.is_partner) showPartnerSection();
+
+		const pendingView = await storage.get("pendingView");
+		if (pendingView) {
+			await storage.remove(["pendingView"]);
+			if (pendingView === "simulate" && state.currentPartner?.is_partner) {
+				loadSimulate();
+			}
+		}
 	} catch (err) {
 		console.error(err);
 	}
@@ -149,12 +157,17 @@ function showPartnerSection() {
 
 // ─── Simulate ─────────────────────────────────────────────────────────────────
 
-function loadSimulate() {
+async function loadSimulate() {
 	loadView("view-simulate");
 	$("simulate-amount").value = "";
 	$("simulate-error").classList.add("hidden");
 	$("btn-simulate").disabled = false;
 	$("btn-simulate").textContent = "Ver planes de pago";
+
+	const detectedPrice = await storage.get("detectedPrice");
+	if (detectedPrice) {
+		$("simulate-amount").value = detectedPrice;
+	}
 }
 
 // ─── Plans ────────────────────────────────────────────────────────────────────
