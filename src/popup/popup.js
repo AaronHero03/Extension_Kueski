@@ -9,6 +9,12 @@ import {
 
 const $ = (id) => document.getElementById(id);
 
+const formatAmount = (n) =>
+	parseFloat(n).toLocaleString("en-US", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	});
+
 const storage = {
 	get: (key) =>
 		new Promise((resolve) =>
@@ -24,8 +30,8 @@ const state = {
 	user: null,
 	dashboard: null,
 	currentTabUrl: null,
-	currentPartner: null,     // { domain, is_partner, id_partner?, cashback_percentage }
-	simulationPreview: null,  // { monto, cashback_to_earn, payment_plans, is_approved }
+	currentPartner: null, // { domain, is_partner, id_partner?, cashback_percentage }
+	simulationPreview: null, // { monto, cashback_to_earn, payment_plans, is_approved }
 };
 
 // ─── Utilidades ───────────────────────────────────────────────────────────────
@@ -65,37 +71,41 @@ async function loadMain() {
 
 	// Limpiar previews
 	$("balance-preview").classList.add("hidden");
-	$("cashback-preview").classList.add("hidden");
 
 	try {
 		const res = await getDashboard();
 		state.dashboard = res.data;
 
 		$("balance-amount").innerHTML =
-			`${res.data.balance.available} <span class="currency">MXN</span>`;
+			`${formatAmount(res.data.balance.available)} <span class="currency">MXN</span>`;
 		$("cashback-amount").innerHTML =
-			`${res.data.cashback.available} <span class="currency">MXN</span>`;
+			`${formatAmount(res.data.cashback.available)} <span class="currency">MXN</span>`;
 		$("user-name").textContent = state.user?.nombre ?? state.user;
 
 		if (state.simulationPreview) {
-			const { monto, cashback_to_earn } = state.simulationPreview;
+			const { monto, cashback_to_earn, is_approved } = state.simulationPreview;
 			const balance = parseFloat(res.data.balance.available);
 			const cashback = parseFloat(res.data.cashback.available);
 
-			$("balance-preview").textContent = `(- $${monto.toFixed(2)} MXN)`;
-			$("balance-preview").classList.remove("hidden");
-			$("balance-result").textContent = `= $${(balance - monto).toFixed(2)} MXN`;
-			$("balance-result").classList.remove("hidden");
+			if (is_approved) {
+				$("balance-preview").textContent = `(- $${formatAmount(monto)} MXN)`;
+				$("balance-preview").classList.remove("hidden");
+				$("balance-result").textContent =
+					`$${formatAmount(balance - monto)} MXN`;
+				$("balance-result").classList.remove("hidden");
 
-			$("cashback-preview").textContent = `(+ $${cashback_to_earn} MXN)`;
-			$("cashback-preview").classList.remove("hidden");
-			$("cashback-result").textContent = `= $${(cashback + parseFloat(cashback_to_earn)).toFixed(2)} MXN`;
-			$("cashback-result").classList.remove("hidden");
+				// Actualizar totales directamente en las columnas
+				$("cashback-amount").innerHTML =
+					`${formatAmount(cashback + parseFloat(cashback_to_earn))} <span class="currency">MXN</span>`;
+			} else {
+				$("balance-preview").classList.add("hidden");
+				$("balance-result").classList.add("hidden");
+				$("balance-warning").textContent =
+					`⚠ Te faltan $${formatAmount(monto - balance - cashback)} MXN para completar esta compra`;
+			}
 		} else {
 			$("balance-preview").classList.add("hidden");
 			$("balance-result").classList.add("hidden");
-			$("cashback-preview").classList.add("hidden");
-			$("cashback-result").classList.add("hidden");
 		}
 
 		await checkCurrentPartner();
@@ -127,7 +137,10 @@ async function checkCurrentPartner() {
 
 function showPartnerSection() {
 	const p = state.currentPartner;
-	$("cashback-pct").textContent = `${p.cashback_percentage}%`;
+	$("cashback-pct").textContent =
+		`${parseFloat(p.cashback_percentage).toFixed(2)}%`;
+	$("cashback-pct").classList.remove("text-earned");
+	$("benefit-col-title").textContent = "Gana % de cashback";
 	$("partner-section").classList.remove("hidden");
 	$("non-partner-section").classList.add("hidden");
 	$("simulate-store-name").textContent = p.domain;
@@ -135,15 +148,17 @@ function showPartnerSection() {
 	if (state.simulationPreview) {
 		const { cashback_to_earn, is_approved } = state.simulationPreview;
 
-		$("simulation-result").textContent =
-			`Ganarás $${cashback_to_earn} MXN en esta compra`;
-		$("simulation-result").classList.remove("hidden");
 		$("btn-pay").textContent = "Cambiar monto";
 
 		if (is_approved) {
+			$("cashback-pct").textContent = `+$${formatAmount(cashback_to_earn)}`;
+			$("cashback-pct").classList.add("text-earned");
+			$("benefit-col-title").textContent = "Ganado en tu compra";
+			$("simulation-result").classList.add("hidden");
 			$("balance-warning").classList.add("hidden");
 			$("btn-see-details").classList.remove("hidden");
 		} else {
+			$("simulation-result").classList.add("hidden");
 			$("balance-warning").classList.remove("hidden");
 			$("btn-see-details").classList.add("hidden");
 		}
@@ -177,7 +192,7 @@ function loadPlans() {
 	$("plans-error").classList.add("hidden");
 
 	const { monto, cashback_to_earn, payment_plans } = state.simulationPreview;
-	$("plans-total-amount").textContent = `$${monto.toFixed(2)} MXN`;
+	$("plans-total-amount").textContent = `$${formatAmount(monto)} MXN`;
 
 	const list = $("plans-list");
 	list.innerHTML = "";
@@ -187,8 +202,8 @@ function loadPlans() {
 		card.innerHTML = `
 			<div class="plan-info">
 				<span class="plan-title">${plan.cuotas} pagos mensuales</span>
-				<span class="plan-subtitle">$${plan.monto_cuota} MXN / mes · Total $${plan.total} MXN</span>
-				<span class="plan-cashback">Cashback a ganar: $${cashback_to_earn} MXN</span>
+				<span class="plan-subtitle">$${formatAmount(plan.monto_cuota)} MXN / mes · Total $${formatAmount(plan.total)} MXN</span>
+				<span class="plan-cashback">Cashback a ganar: $${formatAmount(cashback_to_earn)} MXN</span>
 			</div>
 		`;
 		list.appendChild(card);
@@ -210,7 +225,7 @@ async function loadLoans() {
 
 		$("loans-summary").innerHTML = `
 			<div class="loan-row"><span>Préstamos activos</span><strong>${summary.total_active}</strong></div>
-			<div class="loan-row"><span>Total pendiente</span><strong>$${Number(summary.total_pending).toFixed(2)} MXN</strong></div>
+			<div class="loan-row"><span>Total pendiente</span><strong>$${formatAmount(summary.total_pending)} MXN</strong></div>
 			<div class="loan-row"><span>Próximo vencimiento</span><strong>${new Date(summary.next_due_date).toLocaleDateString("es-MX")}</strong></div>
 		`;
 
@@ -221,7 +236,7 @@ async function loadLoans() {
 			card.className = "loan-card";
 			card.innerHTML = `
 				<div class="loan-header">Préstamo #${loan.id_prestamo}</div>
-				<div class="loan-row"><span>Monto</span><strong>$${Number(loan.cantidad).toFixed(2)} MXN</strong></div>
+				<div class="loan-row"><span>Monto</span><strong>$${formatAmount(loan.cantidad)} MXN</strong></div>
 				<div class="loan-row"><span>Cuotas</span><strong>${loan.cuotas}</strong></div>
 				<div class="loan-row"><span>Tasa anual</span><strong>${(loan.tasa * 100).toFixed(2)}%</strong></div>
 				<div class="loan-row"><span>Vence</span><strong>${new Date(loan.fecha_fin).toLocaleDateString("es-MX")}</strong></div>
@@ -303,14 +318,17 @@ $("btn-simulate").addEventListener("click", async () => {
 	btn.textContent = "Calculando...";
 
 	try {
-		const res = await simulateTransaction(monto, state.currentPartner.id_partner);
+		const res = await simulateTransaction(
+			monto,
+			state.currentPartner.id_partner,
+		);
 		state.simulationPreview = { monto, ...res.data };
 		await loadMain();
 	} catch (err) {
 		errEl.textContent = err.message;
 		errEl.classList.remove("hidden");
 		btn.disabled = false;
-		btn.textContent = "Ver planes de pago";
+		btn.textContent = "Simular compra";
 	}
 });
 

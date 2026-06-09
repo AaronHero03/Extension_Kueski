@@ -90,35 +90,63 @@
 				<button id="btn-logout" class="logout-btn">Cerrar sesión</button>
 			</div>
 
-			<div class="balance-card card">
-				<div class="icon-circle">$</div>
-				<div class="balance-label">Saldo disponible</div>
-				<div class="balance-amount" id="balance-amount">
-					— <span class="currency">MXN</span>
+			<!-- Tarjeta de crédito digital -->
+			<div class="credit-card">
+				<img src="kueski.png" alt="KueskiPay" class="card-logo-small" />
+				<div class="credit-card-info">
+					<div class="credit-card-label">Saldo disponible</div>
+					<div class="credit-card-balance" id="balance-amount">
+						— <span class="currency">MXN</span>
+					</div>
+					<p id="balance-preview" class="amount-preview negative hidden"></p>
+					<p id="balance-result" class="amount-result hidden"></p>
 				</div>
-				<p id="balance-preview" class="amount-preview negative hidden"></p>
-				<p id="balance-result" class="amount-result hidden"></p>
 			</div>
 
-			<div class="cashback-card card">
-				<div class="card-title">Cashback Acumulado</div>
-				<div class="card-amount" id="cashback-amount">
-					— <span class="currency">MXN</span>
+			<!-- Estadísticas en dos columnas -->
+			<div class="stats-row">
+				<div class="stat-col">
+					<svg
+						class="stat-icon-svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<circle cx="12" cy="12" r="9" />
+						<path
+							d="M12 7v1m0 8v1M9.5 10.5a2.5 2.5 0 0 1 5 0c0 1.5-1.3 2-2.5 2.5-1.2.5-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"
+						/>
+					</svg>
+					<div class="stat-title">Cashback</div>
+					<div class="stat-amount" id="cashback-amount">
+						— <span class="currency">MXN</span>
+					</div>
 				</div>
-				<p id="cashback-preview" class="amount-preview positive hidden"></p>
-				<p id="cashback-result" class="amount-result hidden"></p>
+				<div class="stat-divider"></div>
+				<div class="stat-col">
+					<svg
+						class="stat-icon-svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path
+							d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+						/>
+						<circle cx="7" cy="7" r="1" fill="currentColor" stroke="none" />
+					</svg>
+					<div class="stat-title" id="benefit-col-title">Gana % de cashback</div>
+					<div class="stat-amount"><strong id="cashback-pct">—</strong></div>
+				</div>
 			</div>
 
 			<!-- Mostrado solo si la pestaña activa es una tienda partner -->
 			<div id="partner-section" class="hidden">
-				<div class="reward-card card">
-					<div class="card-title">Recompensa en esta tienda</div>
-					<div class="card-amount" id="reward-amount">
-						Gana con tu <strong id="cashback-pct">5%</strong> de cashback en
-						esta tienda
-					</div>
-					<p id="simulation-result" class="sim-result-text hidden"></p>
-				</div>
+				<p id="simulation-result" class="sim-result-text hidden"></p>
 				<div id="balance-warning" class="balance-warning hidden">
 					⚠ Saldo insuficiente para esta compra
 				</div>
@@ -139,7 +167,16 @@
 				</p>
 			</div>
 
-			<button id="btn-loans" class="loans-link-btn">Ver mis préstamos</button>
+			<button id="btn-loans" class="loans-link-btn">
+				Ver mis préstamos
+				<svg class="loans-arrow" viewBox="0 0 20 20" fill="currentColor">
+					<path
+						fill-rule="evenodd"
+						d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+						clip-rule="evenodd"
+					/>
+				</svg>
+			</button>
 		</div>
 
 		<!-- ════════════════════════════ VIEW: SIMULATE ════════════════════════════ -->
@@ -178,7 +215,7 @@
 			<div id="simulate-error" class="view-error hidden"></div>
 
 			<button class="primary-btn rounded" id="btn-simulate">
-				Ver planes de pago
+				Simular compra
 			</button>
 		</div>
 

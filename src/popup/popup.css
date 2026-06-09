@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap");
 
+/* ── Reset ── */
 html,
 body {
 	margin: 0;
@@ -34,10 +35,9 @@ body {
 /* ── Base popup — compartido por todas las vistas ── */
 .kueski-popup {
 	background: #ffffff;
-	width: 360px;
-	padding: 16px;
-	border-radius: 16px;
-	border: 1px solid lightgray;
+	width: 350px;
+	padding: 20px;
+	border: none;
 	display: flex;
 	flex-direction: column;
 	animation: kueskiSlideIn 0.5s ease-out forwards;
@@ -53,10 +53,6 @@ body {
 	border-radius: 50px;
 }
 
-.text-center {
-	text-align: center;
-}
-
 /* ── Header ── */
 .popup-header {
 	display: flex;
@@ -65,7 +61,6 @@ body {
 	margin-bottom: 12px;
 }
 
-.logo,
 .header-logo {
 	height: 40px;
 	width: auto;
@@ -111,7 +106,6 @@ body {
 	border-radius: 8px;
 	padding: 13px;
 	width: 100%;
-	margin-bottom: 0;
 	margin-top: 4px;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
@@ -142,7 +136,6 @@ body {
 	padding: 10px;
 	width: 100%;
 	cursor: pointer;
-	margin-bottom: 0;
 	transition: all 0.2s ease;
 }
 
@@ -151,11 +144,7 @@ body {
 	color: #374151;
 }
 
-#not-account {
-	margin-top: 20px;
-}
-
-/* ── Textos secundarios ── */
+/* ── Textos secundarios (login) ── */
 .secondary-text {
 	text-decoration: none;
 	font-size: 15px;
@@ -164,6 +153,10 @@ body {
 .emphatize {
 	font-weight: bold;
 	color: #00aaff;
+}
+
+#not-account {
+	margin-top: 20px;
 }
 
 /* ── Formulario (login / simulate) ── */
@@ -230,11 +223,14 @@ body {
 	margin: 20px auto 12px;
 }
 
-/* ── View: Main ── */
+/* ── View: Main — saludo ── */
 .user-greeting {
+	align-self: center;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	width: 98%;
+	margin-top: 16px;
 	margin-bottom: 14px;
 	font-size: 16px;
 	color: #374151;
@@ -243,7 +239,7 @@ body {
 .logout-btn {
 	background: none;
 	border: none;
-	color: #9ca3af;
+	color: #787d84;
 	font-size: 13px;
 	cursor: pointer;
 	font-family: inherit;
@@ -254,12 +250,197 @@ body {
 	color: #dc2626;
 }
 
+/* ── View: Main — tarjeta de crédito ── */
+.card {
+	padding: 18px;
+	border-radius: 12px;
+	transition: all 0.1s linear;
+	margin: 4px 0;
+}
+
+.credit-card {
+	background: linear-gradient(135deg, #1967f0 0%, #20bdd7 55%, #53eb56 100%);
+	border-radius: 20px;
+	padding: 18px 20px 16px;
+	color: white;
+	position: relative;
+	overflow: hidden;
+	box-shadow: 0 6px 24px rgba(25, 103, 240, 0.25);
+	margin-bottom: 4px;
+	min-height: 160px;
+	aspect-ratio: 8/4.8;
+}
+
+.credit-card::after {
+	content: "";
+	position: absolute;
+	top: -40px;
+	right: -40px;
+	width: 130px;
+	height: 130px;
+	background: rgba(255, 255, 255, 0.08);
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+.card-logo-small {
+	position: absolute;
+	top: 6px;
+	right: 18px;
+	height: 35px;
+	width: auto;
+	filter: brightness(0) invert(1);
+}
+
+.credit-card-info {
+	position: absolute;
+	bottom: 10%;
+	left: 20px;
+}
+
+.credit-card-label {
+	font-size: 14px;
+	font-weight: 1000;
+	opacity: 0.75;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-bottom: 4px;
+}
+
+.credit-card-balance {
+	font-size: 28px;
+	font-weight: 700;
+	letter-spacing: -0.5px;
+	margin-bottom: 4px;
+	line-height: 1;
+}
+
+.credit-card-balance .currency {
+	font-size: 15px;
+	font-weight: 1000;
+	margin-left: 4px;
+	opacity: 0.85;
+}
+
+.credit-card .amount-preview {
+	font-size: 13px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.85);
+	margin-top: 8px;
+	margin-bottom: 0;
+}
+
+.credit-card .amount-result {
+	font-size: 16px;
+	font-weight: 600;
+	color: #ffffff;
+	margin-top: 4px;
+	margin-bottom: 0;
+	letter-spacing: -0.3px;
+}
+
+/* ── View: Main — columnas de estadísticas ── */
+.stats-row {
+	display: grid;
+	grid-template-columns: 1fr 1px 1fr;
+	align-items: start;
+	padding: 10px 4px 0;
+	margin-bottom: 0;
+}
+
+.stat-col {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 6px 8px;
+	text-align: center;
+}
+
+.stat-divider {
+	background: #e5e7eb;
+	align-self: stretch;
+	margin: 6px 0;
+}
+
+.stat-icon-svg {
+	width: 22px;
+	height: 22px;
+	color: #9ca3af;
+	margin-bottom: 5px;
+	stroke-width: 1.75;
+}
+
+.stat-title {
+	font-size: 10px;
+	font-weight: 700;
+	color: #9ca3af;
+	text-transform: uppercase;
+	letter-spacing: 0.7px;
+	margin-bottom: 3px;
+}
+
+.stat-amount {
+	font-size: 16px;
+	font-weight: 700;
+	color: #111111;
+	line-height: 1.2;
+}
+
+.stat-amount .currency {
+	font-size: 11px;
+	font-weight: 400;
+	color: #9ca3af;
+	margin-left: 2px;
+}
+
+.stat-amount .text-earned {
+	color: #16a34a;
+}
+
+/* ── View: Main — partner section ── */
 #partner-section:not(.hidden) {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
+.amount-preview {
+	font-size: 13px;
+	font-weight: 600;
+	margin: 6px 0 0;
+}
+
+.amount-preview.negative {
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.amount-result {
+	font-size: 14px;
+	font-weight: 700;
+	margin-top: 2px;
+}
+
+.sim-result-text {
+	font-size: 13px;
+	font-weight: 600;
+	color: #16a34a;
+	margin-top: 8px;
+}
+
+.balance-warning {
+	background: #fffbeb;
+	border: 1px solid #fcd34d;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #92400e;
+	text-align: center;
+}
+
+/* ── View: Main — no partner ── */
 .non-partner-msg {
 	text-align: center;
 	color: #9ca3af;
@@ -274,114 +455,29 @@ body {
 	margin-bottom: 4px;
 }
 
-/* ── Cards ── */
-.card {
-	padding: 18px;
-	border-radius: 14px;
-	transition: all 0.1s linear;
-	margin: 4px 0px;
+/* ── View: Main — footer ── */
+.loans-link-btn {
+	background: none;
+	border: none;
+	color: #2b95fa;
+	font-size: 14px;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	margin-top: 8px;
+	text-align: center;
+	width: 100%;
 }
 
-.balance-card {
-	background: linear-gradient(90deg, #20bdd7 0%, #53eb56 100%);
-	color: white;
-	padding: 14px 16px;
-	border-radius: 14px;
-	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
-	margin-bottom: 8px;
+.loans-link-btn:hover {
+	color: #1c81df;
 }
 
-.balance-card:hover {
-	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-}
-
-.icon-circle {
-	width: 40px;
-	height: 40px;
-	border: 4px solid rgba(255, 255, 255, 0.95);
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 25px;
-	line-height: 1;
-	margin-bottom: 10px;
-	font-weight: bold;
-}
-
-.balance-label {
-	font-size: 16px;
-	font-weight: 700;
-	margin-bottom: 6px;
-}
-
-.balance-amount {
-	font-size: 22px;
-	font-weight: 700;
-	letter-spacing: 0.5px;
-}
-
-.balance-amount .currency {
-	font-size: 16px;
-	font-weight: 400;
-	margin-left: 6px;
-}
-
-.cashback-card {
-	background: #f7f7f7;
-	border: 2px solid #d7d7d7;
-	color: #111;
-	margin-bottom: 8px;
-}
-
-.cashback-card:hover {
-	border: 2px solid #cdcdcd;
-}
-
-.card-title {
-	font-size: 15px;
-	font-weight: 700;
-	margin-bottom: 6px;
-}
-
-.card-amount {
-	font-size: 18px;
-	font-weight: 700;
-}
-
-.card-amount .currency {
-	font-size: 16px;
-	font-weight: 400;
+.loans-arrow {
+	width: 14px;
+	height: 14px;
+	vertical-align: middle;
 	margin-left: 4px;
-}
-
-.reward-card {
-	border: 1px solid #d2f6cb;
-	background: #eeffeb;
-	color: #111;
-}
-
-.reward-card:hover {
-	border: 1px solid #bbebb1;
-}
-
-.reward-card .card-title {
-	margin-bottom: 8px;
-}
-
-.reward-card .card-amount {
-	font-size: 16px;
-	font-weight: 400;
-}
-
-.reward-card .card-amount strong {
-	font-weight: 700;
-}
-
-.reward-subtitle {
-	font-size: 16px;
-	font-weight: 400;
-	line-height: 1.35;
 }
 
 /* ── View: Simulate ── */
@@ -489,11 +585,6 @@ body {
 	background: #f0f9ff;
 }
 
-.plan-card.selected {
-	border-color: #2b95fa;
-	background: #eff8ff;
-}
-
 .plan-info {
 	display: flex;
 	flex-direction: column;
@@ -516,189 +607,6 @@ body {
 	color: #16a34a;
 	font-weight: 600;
 	margin-top: 3px;
-}
-
-.plan-radio {
-	width: 20px;
-	height: 20px;
-	border: 2px solid #d1d5db;
-	border-radius: 50%;
-	position: relative;
-	flex-shrink: 0;
-	transition: all 0.15s ease;
-}
-
-.plan-card.selected .plan-radio {
-	border-color: #2b95fa;
-	background: #2b95fa;
-}
-
-.plan-card.selected .plan-radio::after {
-	content: "";
-	width: 8px;
-	height: 8px;
-	background: white;
-	border-radius: 50%;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
-/* ── View: Confirm ── */
-.confirm-title {
-	font-size: 18px;
-	font-weight: 700;
-	text-align: center;
-	margin-bottom: 14px;
-	color: #111;
-}
-
-.confirm-summary {
-	background: #f9fafb;
-	border: 1px solid #e5e7eb;
-	margin-bottom: 16px;
-}
-
-.summary-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px 0;
-	border-bottom: 1px solid #f3f4f6;
-	font-size: 14px;
-}
-
-.summary-row:last-child {
-	border-bottom: none;
-}
-
-.summary-label {
-	color: #6b7280;
-}
-
-.summary-value {
-	font-weight: 600;
-	color: #111;
-}
-
-.summary-value.green-text {
-	color: #16a34a;
-	font-size: 15px;
-}
-
-.cashback-divider {
-	border: none;
-	border-top: 1px dashed #d1d5db;
-	margin: 4px 0;
-}
-
-/* ── View: Success ── */
-.success-body {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-align: center;
-	padding: 8px 0;
-}
-
-.success-icon {
-	width: 64px;
-	height: 64px;
-	background: linear-gradient(135deg, #20bdd7 0%, #53eb56 100%);
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 30px;
-	color: white;
-	font-weight: bold;
-	margin: 8px 0 18px;
-}
-
-.success-title {
-	font-size: 22px;
-	font-weight: 700;
-	color: #111;
-	margin-bottom: 8px;
-}
-
-.success-subtitle {
-	font-size: 14px;
-	color: #6b7280;
-	margin-bottom: 20px;
-	line-height: 1.6;
-}
-
-.cashback-earned {
-	background: #f0fdf4;
-	border: 1px solid #bbf7d0;
-	width: 100%;
-	text-align: center;
-	margin-bottom: 20px;
-}
-
-.cashback-earned .card-amount {
-	color: #16a34a;
-	font-size: 22px;
-}
-
-/* ── Previews de simulación en las cards ── */
-.amount-preview {
-	font-size: 13px;
-	font-weight: 600;
-	margin: 6px 0 0;
-}
-
-.amount-preview.negative {
-	color: rgba(255, 255, 255, 0.85);
-}
-
-.amount-preview.positive {
-	color: #16a34a;
-}
-
-.amount-result {
-	font-size: 14px;
-	font-weight: 700;
-	margin-top: 2px;
-}
-
-.sim-result-text {
-	font-size: 13px;
-	font-weight: 600;
-	color: #16a34a;
-	margin-top: 8px;
-}
-
-/* ── Advertencia de saldo insuficiente ── */
-.balance-warning {
-	background: #fffbeb;
-	border: 1px solid #fcd34d;
-	border-radius: 8px;
-	padding: 10px 14px;
-	font-size: 13px;
-	font-weight: 600;
-	color: #92400e;
-	text-align: center;
-}
-
-/* ── Botón de préstamos ── */
-.loans-link-btn {
-	background: none;
-	border: none;
-	color: #2b95fa;
-	font-size: 14px;
-	font-weight: 600;
-	font-family: inherit;
-	cursor: pointer;
-	padding: 10px 0 2px;
-	text-align: center;
-	width: 100%;
-}
-
-.loans-link-btn:hover {
-	color: #1c81df;
 }
 
 /* ── View: Loans ── */

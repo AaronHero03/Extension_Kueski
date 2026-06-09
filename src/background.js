@@ -45,6 +45,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	}
 });
 
+
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 	try {
 		const tab = await chrome.tabs.get(tabId);
