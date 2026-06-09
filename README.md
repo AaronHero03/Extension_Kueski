@@ -115,7 +115,7 @@ npm start
 # → http://localhost:3000
 ```
 
-[API/docs/SETUP.md](https://github.com/AaronHero03/REST_API_Kueski/blob/main/API/docs/SETUP.md) | Installation, schema, seed data, and verification | for the full setup guide including database schema and seed data.
+[API/docs/SETUP.md](https://github.com/AaronHero03/REST_API_Kueski/tree/main/docs/SETUP.md) | Installation, schema, seed data, and verification | for the full setup guide including database schema and seed data.
 
 ### Extension
 
@@ -132,13 +132,13 @@ To point the extension at a local API server, open `src/api.js` and set `local =
 
 ### API
 
-| Document                                                                                                      | Contents                                                  |
-| ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| [API/docs/ARCHITECTURE.md](https://github.com/AaronHero03/REST_API_Kueski/blob/main/API/docs/ARCHITECTURE.md) | Express structure, route map, request lifecycle, env vars |
-| [API/docs/AUTH.md](https://github.com/AaronHero03/REST_API_Kueski/blob/main/API/docs/AUTH.md)                 | JWT authentication flow and middleware                    |
-| [API/docs/ENDPOINTS.md](https://github.com/AaronHero03/REST_API_Kueski/blob/main/API/docs/ENDPOINTS.md)       | Full endpoint reference with request/response examples    |
-| [API/docs/DATABASE.md](https://github.com/AaronHero03/REST_API_Kueski/blob/main/API/docs/DATABASE.md)         | ER diagram and SQL queries per endpoint                   |
-| [API/docs/SETUP.md](https://github.com/AaronHero03/REST_API_Kueski/blob/main/API/docs/SETUP.md)               | Installation, schema, seed data, and verification         |
+| Document                                                                                                  | Contents                                                  |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| [API/docs/ARCHITECTURE.md](https://github.com/AaronHero03/REST_API_Kueski/tree/main/docs/ARCHITECTURE.md) | Express structure, route map, request lifecycle, env vars |
+| [API/docs/AUTH.md](https://github.com/AaronHero03/REST_API_Kueski/tree/main/docs/AUTH.md)                 | JWT authentication flow and middleware                    |
+| [API/docs/ENDPOINTS.md](https://github.com/AaronHero03/REST_API_Kueski/tree/main/docs/ENDPOINTS.md)       | Full endpoint reference with request/response examples    |
+| [API/docs/DATABASE.md](https://github.com/AaronHero03/REST_API_Kueski/tree/main/docs/DATABASE.md)         | ER diagram and SQL queries per endpoint                   |
+| [API/docs/SETUP.md](https://github.com/AaronHero03/REST_API_Kueski/tree/main/docs/SETUP.md)               | Installation, schema, seed data, and verification         |
 
 ### Extension
 
