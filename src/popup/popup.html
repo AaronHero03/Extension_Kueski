@@ -56,7 +56,7 @@
 				<div id="login-error" class="hidden"></div>
 
 				<div class="secondary-btn">
-					<a href="#" class="secondary-text emphatize"
+					<a href="#" id="link-forgot" class="secondary-text emphatize"
 						>¿Olvidaste tu contraseña?</a
 					>
 				</div>
@@ -68,9 +68,7 @@
 
 			<div id="not-account" class="secondary-text">
 				¿Aún no tienes cuenta?
-				<a
-					href="https://www.kueskipay.com/sign-up"
-					class="emphatize secondary-text"
+				<a href="#" id="link-signup" class="emphatize secondary-text"
 					>Crear una cuenta</a
 				>
 			</div>
@@ -114,15 +112,18 @@
 						stroke-linecap="round"
 						stroke-linejoin="round"
 					>
-						<circle cx="12" cy="12" r="9" />
-						<path
-							d="M12 7v1m0 8v1M9.5 10.5a2.5 2.5 0 0 1 5 0c0 1.5-1.3 2-2.5 2.5-1.2.5-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"
-						/>
+						<g transform="translate(0,24) scale(1,-1)">
+							<circle cx="12" cy="12" r="9" />
+							<path
+								d="M12 7v1m0 8v1M9.5 10.5a2.5 2.5 0 0 1 5 0c0 1.5-1.3 2-2.5 2.5-1.2.5-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"
+							/>
+						</g>
 					</svg>
 					<div class="stat-title">Cashback</div>
 					<div class="stat-amount" id="cashback-amount">
 						— <span class="currency">MXN</span>
 					</div>
+					<p id="cashback-result" class="stat-amount-new hidden"></p>
 				</div>
 				<div class="stat-divider"></div>
 				<div class="stat-col">
@@ -139,7 +140,9 @@
 						/>
 						<circle cx="7" cy="7" r="1" fill="currentColor" stroke="none" />
 					</svg>
-					<div class="stat-title" id="benefit-col-title">Gana % de cashback</div>
+					<div class="stat-title" id="benefit-col-title">
+						Gana % de cashback
+					</div>
 					<div class="stat-amount"><strong id="cashback-pct">—</strong></div>
 				</div>
 			</div>

@@ -94,18 +94,21 @@ async function loadMain() {
 					`$${formatAmount(balance - monto)} MXN`;
 				$("balance-result").classList.remove("hidden");
 
-				// Actualizar totales directamente en las columnas
-				$("cashback-amount").innerHTML =
-					`${formatAmount(cashback + parseFloat(cashback_to_earn))} <span class="currency">MXN</span>`;
+				// Mostrar el nuevo total de cashback debajo del actual
+				$("cashback-result").textContent =
+					`Nuevo total: $${formatAmount(cashback + parseFloat(cashback_to_earn))} MXN`;
+				$("cashback-result").classList.remove("hidden");
 			} else {
 				$("balance-preview").classList.add("hidden");
 				$("balance-result").classList.add("hidden");
+				$("cashback-result").classList.add("hidden");
 				$("balance-warning").textContent =
 					`⚠ Te faltan $${formatAmount(monto - balance - cashback)} MXN para completar esta compra`;
 			}
 		} else {
 			$("balance-preview").classList.add("hidden");
 			$("balance-result").classList.add("hidden");
+			$("cashback-result").classList.add("hidden");
 		}
 
 		await checkCurrentPartner();
@@ -278,6 +281,16 @@ $("form-login").addEventListener("submit", async (e) => {
 		btn.disabled = false;
 		btn.textContent = "Iniciar sesión";
 	}
+});
+
+$("link-signup").addEventListener("click", (e) => {
+	e.preventDefault();
+	chrome.tabs.create({ url: "https://www.kueskipay.com/sign-up" });
+});
+
+$("link-forgot").addEventListener("click", (e) => {
+	e.preventDefault();
+	chrome.tabs.create({ url: "https://www.kueskipay.com/sign-up" });
 });
 
 $("btn-logout").addEventListener("click", async () => {

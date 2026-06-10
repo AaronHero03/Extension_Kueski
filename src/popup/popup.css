@@ -301,7 +301,7 @@ body {
 .credit-card-label {
 	font-size: 14px;
 	font-weight: 1000;
-	opacity: 0.75;
+	opacity: 0.9;
 	text-transform: uppercase;
 	letter-spacing: 1px;
 	margin-bottom: 4px;
@@ -395,6 +395,13 @@ body {
 
 .stat-amount .text-earned {
 	color: #16a34a;
+}
+
+.stat-amount-new {
+	font-size: 11px;
+	font-weight: 600;
+	color: #16a34a;
+	margin: 2px 0 0;
 }
 
 /* ── View: Main — partner section ── */
